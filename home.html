@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FindBack | Parul University Goa Lost and Found Portal</title>
+    <link rel="icon" type="image/png" href="images/spy-favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+<header>
+     <div class="nav-style">
+        <div class="logo-container">
+            <img src="images/FindBack-Logo.png" alt="FindBack Logo" width="350">
+        </div>
+        <div class="nav-container">
+            <br>
+            <nav>
+                <a href="home.html">Home</a>
+                <a href="lost.html">Lost Items</a>
+                <a href="found.html">Found Items</a>
+                <a href="contact.html">Feedback</a>
+            </nav>
+        </div>
+         <div class="login-container" id="authSlot" aria-label="Account"></div>
+    </div>
+        <hr>
+</header>
+    
+    <main>
+        <section class="hero" aria-labelledby="hero-title">
+            <p class="eyebrow">Parul University Lost and Found Portal</p>
+            <h1 id="hero-title">Lost something? <span>Let's find it.</span></h1>
+            <p>FindBack helps students and staff reconnect with lost belongings. Search reported items or report something you've lost or found.</p>
+            <div class="actions">
+                <a href="lost.html" class="primary">Search lost items</a>
+                <a href="found.html" class="secondary">Report an item</a>
+            </div>
+        </section>
+
+        <section class="portal-options" aria-labelledby="options-title">
+            <h2 id="options-title">How can we help?</h2>
+            <div class="grid">
+                <article class="card">
+                    <h3>Lost something?</h3>
+                    <p>Browse items reported by the university community.</p>
+                    <a href="lost.html">View lost items</a>
+                </article>
+                <article class="card">
+                    <h3>Found something?</h3>
+                    <p>Submit details so its owner can find it.</p>
+                    <a href="found.html">Report a found item</a>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer" align="center">
+        <p>&copy; 2025 FindBack by Parul University Goa</p>
+        <a href="contact.html">Share feedback</a>
+    </footer>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/profile-photo.js"></script>
+<script src="js/header-auth.js"></script>
+<script src="js/script.js"></script>
+</html>

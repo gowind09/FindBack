@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FindBack | Admin Dashboard</title>
+<link rel="icon" type="image/png" href="images/spy-favicon.png">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<aside class="sidebar">
+    
+        
+    <img src="images/FindBack-Logo.png" alt="FindBack Logo" width="220px">
+      
+    
+    <nav class="sidebar-nav">
+        <button class="nav-item active" data-section="dashboard">Dashboard</button>
+        <button class="nav-item" data-section="reports">Reports</button>
+        <button class="nav-item" data-section="users">Users</button>
+        <button class="nav-item" data-section="messages">Feedback</button>
+        <button class="nav-item" data-section="admins" id="adminsNav">Administrators</button>
+    </nav>
+    <div class="sidebar-bottom">
+        <a href="home.html" class="back-home">Back to Website</a>
+        <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
+</aside>
+
+<main class="main-content">
+    <header class="topbar">
+        <div>
+            <h1 id="pageTitle">Dashboard</h1>
+            <p id="pageSubtitle">Manage your FindBack platform</p>
+        </div>
+        <div class="admin-profile">
+            <div class="admin-avatar" id="adminAvatar">A</div>
+            <div class="admin-info">
+                <strong id="adminName">Administrator</strong>
+                <span id="adminRole">Admin</span>
+            </div>
+        </div>
+    </header>
+
+    <section id="dashboardSection" class="page-section active-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">U</div>
+                <div>
+                    <span>Total Users</span>
+                    <h2 id="totalUsers">0</h2>
+                    <small>Registered users</small>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon red">L</div>
+                <div>
+                    <span>Lost Items</span>
+                    <h2 id="totalLost">0</h2>
+                    <small>Reported lost</small>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">F</div>
+                <div>
+                    <span>Found Items</span>
+                    <h2 id="totalFound">0</h2>
+                    <small>Reported found</small>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple">R</div>
+                <div>
+                    <span>Resolved</span>
+                    <h2 id="totalResolved">0</h2>
+                    <small>Successfully resolved</small>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange">X</div>
+                <div>
+                    <span>Fake Reports</span>
+                    <h2 id="totalFake">0</h2>
+                    <small>Marked as fake</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>Recent Reports</h2>
+                        <p>Latest activity on FindBack</p>
+                    </div>
+                    <button class="view-btn" data-section-target="reports">View All</button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Type</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentReportsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>Platform Overview</h2>
+                        <p>Current system status</p>
+                    </div>
+                </div>
+                <div class="overview-list">
+                    <div class="overview-row">
+                        <span>Active Reports</span>
+                        <strong id="activeReports">0</strong>
+                    </div>
+                    <div class="overview-row">
+                        <span>Resolved Reports</span>
+                        <strong id="overviewResolved">0</strong>
+                    </div>
+                    <div class="overview-row">
+                        <span>Fake Reports</span>
+                        <strong id="overviewFake">0</strong>
+                    </div>
+                    <div class="overview-row">
+                        <span>Administrators</span>
+                        <strong id="totalAdmins">0</strong>
+                    </div>
+                    <div class="overview-row">
+                        <span>Feedback</span>
+                        <strong id="totalMessages">0</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="reportsSection" class="page-section">
+        <div class="section-header">
+            <div>
+                <h2>Manage Reports</h2>
+                <p>Review and manage all lost and found reports.</p>
+            </div>
+            <div class="filters">
+                <input type="text" id="reportSearch" placeholder="Search reports...">
+                <select id="reportTypeFilter">
+                    <option value="all">All Types</option>
+                    <option value="lost">Lost</option>
+                    <option value="found">Found</option>
+                </select>
+                <select id="reportStatusFilter">
+                    <option value="all">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="resolved">Resolved</option>
+                    <option value="removed">Removed</option>
+                    <option value="fake">Fake</option>
+                </select>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Type</th>
+                            <th>Category</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section id="usersSection" class="page-section">
+        <div class="section-header">
+            <div>
+                <h2>Users</h2>
+                <p>View registered FindBack users.</p>
+            </div>
+            <input type="text" id="userSearch" placeholder="Search users...">
+        </div>
+        <div class="panel">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section id="messagesSection" class="page-section">
+        <div class="section-header">
+            <div>
+                <h2>Feedback</h2>
+                <p>Feedback submitted through FindBack.</p>
+            </div>
+        </div>
+        <div id="messagesContainer" class="messages-grid"></div>
+    </section>
+
+    <section id="adminsSection" class="page-section">
+        <div class="section-header">
+            <div>
+                <h2>Administrators</h2>
+                <p>Manage FindBack administrators.</p>
+            </div>
+        </div>
+
+        <div class="admin-layout">
+            <div class="panel create-admin-panel" id="createAdminPanel">
+                <div class="panel-header">
+                    <div>
+                        <h2>Create Administrator</h2>
+                        <p>Super Admins and the President can manage Admin accounts.</p>
+                    </div>
+                </div>
+                <form id="createAdminForm">
+                    <label>Full Name</label>
+                    <input type="text" id="newAdminName" placeholder="Full name" required>
+                    <label>Email</label>
+                    <input type="email" id="newAdminEmail" placeholder="Email address" required>
+                    <label for="newAdminRole">Rank</label>
+                    <select id="newAdminRole" required>
+                        <option value="admin">Admin</option>
+                        <option value="super_admin" hidden>Super Admin</option>
+                    </select>
+                    <label>Temporary Password</label>
+                    <div class="password-input-wrap">
+                        <input type="password" id="newAdminPassword" placeholder="Minimum 8 characters" minlength="8" required>
+                        <button class="password-toggle" type="button" data-target="newAdminPassword" aria-pressed="false">Show</button>
+                    </div>
+                    <button type="submit" class="primary-btn">Add Admin</button>
+                </form>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>Current Administrators</h2>
+                        <p>Users with elevated access.</p>
+                    </div>
+                </div>
+                <div class="admin-list" id="adminList"></div>
+            </div>
+        </div>
+    </section>
+
+    <div id="itemModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">×</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/password-toggle.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

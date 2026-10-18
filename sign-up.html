@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FindBack | Create Account</title>
+    <link rel="icon" type="image/png" href="images/spy-favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+    <div class="auth-page">
+        <div class="auth-card">
+            <img src="images/FindBack-Logo.png" alt="FindBack Logo">
+            <h1>Create Account</h1>
+            <p>Join FindBack and help reunite lost items.</p>
+
+            <form id="signupForm">
+                <label for="fullName">Full name</label>
+                <input id="fullName" name="fullName" type="text" autocomplete="name" placeholder="Enter your full name" required>
+                <label for="phone">Phone number</label>
+                <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="Enter your phone number" minlength="7" maxlength="20" pattern="[+0-9() -]{7,20}" title="Enter 7 to 20 digits or phone symbols" required>
+                <label for="profilePhoto">Profile photo <span class="optional-label">(optional)</span></label>
+                <input id="profilePhoto" name="profilePhoto" type="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-describedby="profilePhotoHelp">
+                <small id="profilePhotoHelp" class="reset-help">JPG, PNG, WebP, or GIF · up to 5 MB</small>
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email" placeholder="Enter your email" required>
+                <label for="password">Password</label>
+                <div class="password-input-wrap">
+                <input id="password" name="password" type="password" autocomplete="new-password" placeholder="Create a password" minlength="8" aria-describedby="passwordGuidance" required>
+                    <button class="password-toggle" type="button" data-target="password" aria-pressed="false">Show</button>
+                </div>
+                <small id="passwordGuidance" class="reset-help">Use at least 8 characters.</small>
+                <label for="confirmPassword">Confirm password</label>
+                <div class="password-input-wrap">
+                    <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" placeholder="Confirm your password" required>
+                    <button class="password-toggle" type="button" data-target="confirmPassword" aria-pressed="false">Show</button>
+                </div>
+                <label class="terms-consent"><input id="termsAccepted" type="checkbox" required> I agree to the <a href="terms.html" target="_blank" rel="noopener">Terms and Conditions</a>.</label>
+                <button id="signupBtn" type="submit">Create Account</button>
+                <p id="signupMessage" class="reset-status" role="status" aria-live="polite"></p>
+            </form>
+
+            <p class="auth-footer">Already have an account?<a href="login.html">&nbsp;Login</a></p>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/profile-photo.js"></script>
+    <script src="js/password-toggle.js"></script>
+    <script src="js/signup.js"></script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FindBack | Feedback</title>
+    <link rel="icon" type="image/png" href="images/spy-favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .support-team h2 {
+            color:var(--primary-dark);
+            margin-bottom: 12px;
+        }
+
+        .support-team ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .support-team li {
+            background-color: #f0f6fb;
+            border-left: 4px solid var(--primary);
+            border-radius: 4px;
+            color: #333;
+            margin-bottom: 8px;
+            padding: 8px 12px;
+        }
+    </style>
+</head>
+
+<body>
+<header>
+     <div class="nav-style">
+        <div class="logo-container">
+            <img src="images/FindBack-Logo.png" alt="FindBack Logo" width="350">
+        </div>
+        <div class="nav-container">
+            <br>
+            <nav>
+                <a href="home.html">Home</a>
+                <a href="lost.html">Lost Items</a>
+                <a href="found.html">Found Items</a>
+                <a href="contact.html">Feedback</a>
+            </nav>
+        </div>
+         <div class="login-container" id="authSlot" aria-label="Account"></div>
+    </div>
+        <hr>
+</header>
+<main>
+    <section class="contact-page" aria-labelledby="contact-title">
+        <div class="contact-intro">
+            <h1 id="contact-title">Share Feedback</h1>
+            <p>Share feedback, suggestions, or issues with the FindBack team.</p>
+            <div class="contact-details">
+                <div>
+                    <h2>FindBack Support</h2>
+                    <p>Parul University Goa Campus</p>
+                </div>
+                <div class="support-team">
+                    <h2>Support Team</h2>
+                    <ul>
+                        <li>Govindkumar Pandit</li>
+                        <li>Raushan Kumar Singh</li>
+                        <li>Daniel Da Costa</li>
+                        <li>Satyendra Jaiswal</li>
+                    </ul>
+                </div>
+                <div><h2>Email</h2><p><a href="mailto:support@findback.com">support@findback.com</a></p></div>
+                <div><h2>Office Hours</h2><p>Monday–Friday, 9:00 AM–5:00 PM</p></div>
+            </div>
+        </div>
+        <form class="contact-form" action="#" method="post">
+            <h2>Send feedback</h2>
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter your name" required>
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            <label for="subject">Topic</label>
+            <input type="text" id="subject" name="subject" placeholder="What is your feedback about?" required>
+            <label for="message">Feedback</label>
+            <textarea id="message" name="message" rows="6" placeholder="Share your feedback or describe an issue" required></textarea>
+            <button type="submit">Send Feedback</button>
+        </form>
+    </section>
+</main>
+
+<footer class="site-footer" align="center">
+    <p>&copy; 2026 FindBack by Parul University Goa</p>
+    <a href="contact.html">Share feedback</a>
+</footer>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/profile-photo.js"></script>
+<script src="js/header-auth.js"></script>
+<script src="js/script.js"></script>
+</html>

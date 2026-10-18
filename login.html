@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FindBack - Login</title>
+    <link rel="icon" type="image/png" href="images/spy-favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+    <div class="auth-page">
+        <div class="auth-card">
+            <img src="images/FindBack-Logo.png" alt="FindBack Logo">
+            <h1>Sign In</h1>
+            <p>Welcome back!</p>
+
+            <form id="loginForm">
+                <input id="email" type="email" placeholder="Enter your email" required>
+                <div class="password-input-wrap">
+                    <input id="password" type="password" autocomplete="current-password" placeholder="Enter the password" required>
+                    <button class="password-toggle" type="button" data-target="password" aria-pressed="false">Show</button>
+                </div>
+            <a class="forgot-password-link" id="forgotPasswordLink" href="reset-password.html">Forgot password?</a>
+                <label for="phone"></label>
+                <input id="phone" type="tel" autocomplete="tel" minlength="7" maxlength="20" pattern="[+0-9() -]{7,20}" title="Enter 7 to 20 digits or phone symbols" placeholder="Save/update your profile phone number">
+                <label class="terms-consent"><input id="termsAccepted" type="checkbox" required> I agree to the <a href="terms.html" target="_blank" rel="noopener">Terms and Conditions</a>.</label>
+                <p id="loginMessage"></p>
+                <button id="loginBtn" type="submit">Sign In</button>
+            </form>
+
+            <form id="passwordResetForm" hidden>
+                <h2>Set a new password</h2>
+                <label for="newPassword">New password</label>
+                <div class="password-input-wrap">
+                    <input id="newPassword" type="password" autocomplete="new-password" minlength="8" required>
+                    <button class="password-toggle" type="button" data-target="newPassword" aria-pressed="false">Show</button>
+                </div>
+                <label for="confirmNewPassword">Confirm new password</label>
+                <div class="password-input-wrap">
+                    <input id="confirmNewPassword" type="password" autocomplete="new-password" minlength="8" required>
+                    <button class="password-toggle" type="button" data-target="confirmNewPassword" aria-pressed="false">Show</button>
+                </div>
+                <p id="passwordResetMessage" role="status" aria-live="polite"></p>
+                <button id="passwordResetBtn" type="submit">Update Password</button>
+            </form>
+
+        <p>Don't have an account? <a href="sign-up.html">Create Account</a></p>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/password-toggle.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>
+
