@@ -66,11 +66,24 @@ create policy "Authenticated users can upload item images"
     );
 
 drop policy if exists "Authenticated users can view item images" on storage.objects;
-create policy "Authenticated users can view item images"
+drop policy if exists "Users can view photos for visible reports and own profile" on storage.objects;
+create policy "Users can view photos for visible reports and own profile"
     on storage.objects
     for select
     to authenticated
-    using (bucket_id = 'item-images');
+    using (
+        bucket_id = 'item-images'
+        and (
+            exists (
+                select 1 from public.items as item
+                where item.image_url = storage.objects.name
+            )
+            or (
+                (storage.foldername(storage.objects.name))[1] = (select auth.uid()::text)
+                and (storage.foldername(storage.objects.name))[2] = 'profile'
+            )
+        )
+    );
 
 drop policy if exists "Users can delete item images" on storage.objects;
 create policy "Users can delete item images"

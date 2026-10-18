@@ -8,8 +8,13 @@ The connected FindBack project already has the SQL changes below applied. If you
 4. `setup_admin_dashboard_access.sql`
 5. `setup_president_admin_management.sql`
 6. `setup_profile_photo.sql`
+7. `secure_photo_access.sql` (for an already-deployed project; this replaces the broad photo-read policy)
 
 Sign-up accepts an optional JPG, PNG, WebP, or GIF profile photo up to 5 MB. The photo is held locally until email verification establishes a signed-in session, then uploaded to the private `item-images` bucket under the user's own folder and saved as `profiles.avatar_path`.
+
+The item photo viewer requests five-minute signed URLs through the current Supabase session, with Storage RLS authorizing each request. Storage read policies allow report photos referenced by a report visible under the `items` table's RLS policies, the signed-in user's own profile photo, and the existing admin policy. This preserves the current signed-in report-browsing behavior; it does not make reports private between signed-in users. Before applying `secure_photo_access.sql`, confirm that policy impact matches the intended audience for report listings. The migration can be reverted with `rollback_secure_photo_access.sql`, which restores the prior broad read policy and is therefore less restrictive. The connected project had no legacy HTTP image URLs when checked; app-created image references are Storage object paths.
+
+The viewer blocks context menus and dragging on displayed item photos as basic deterrents. These measures cannot stop screenshots, screen recording, developer tools, or saving an image from a still-valid signed URL.
 
 Run `setup_president_admin_management.sql` after the earlier SQL files. Deploy `functions/create-admin/index.ts` as `create-admin` and `functions/remove-admin/index.ts` as `remove-admin`, with JWT verification enabled. They validate the caller's live Auth session. Super Admins and the President can create or remove regular Admins; only the President can create or demote Super Admins. The President account itself cannot be removed through this dashboard.
 

@@ -207,14 +207,7 @@ async function loadItems() {
             return { user, error };
         }
 
-        itemsCache = await Promise.all((data || []).map(async row => {
-            let photo = "";
-            if (row.image_url) {
-                const { data: signedImage, error: imageError } = await supabaseClient.storage
-                    .from(ITEM_IMAGES_BUCKET)
-                    .createSignedUrl(row.image_url, 3600);
-                if (!imageError) photo = signedImage.signedUrl;
-            }
+        itemsCache = (data || []).map(row => {
             return {
                 id: row.id,
                 trackingId: row.tracking_id || row.id,
@@ -227,12 +220,12 @@ async function loadItems() {
                 contactName: row.contact_name || "",
                 email: row.contact_email || "",
                 phone: row.contact_phone || "",
-                photo,
+                photo: row.image_url || "",
                 status: row.status,
                 createdAt: row.created_at,
                 userId: row.user_id
             };
-        }));
+        });
         return { user, error: null };
     })().finally(() => { itemsLoadPromise = null; });
     return itemsLoadPromise;
@@ -694,6 +687,8 @@ function renderItems(searchTerm = "") {
 
     `;
 
+    window.FindBackPhotoViewer?.protect(container);
+
 
     /* DETAILS BUTTON */
 
@@ -734,20 +729,7 @@ function createCard(item) {
 
     const image =
         item.photo
-
-            ? `
-                <img
-                    src="${item.photo}"
-                    alt="${escapeHTML(item.itemName)}"
-                    style="
-                         width: 100%;
-                         height: 300px;
-                        object-fit: cover;
-                        display: block;
-                        border-radius: 10px;
-                         margin-bottom: 15px;
-                ">
-              `
+            ? window.FindBackPhotoViewer.markup(item.photo, item.itemName, "item-card-photo")
 
             : `
                 <div style="
@@ -957,19 +939,7 @@ function showItemDetails(item) {
 
                 ${
                     item.photo
-                        ? `
-                            <img
-                                src="${item.photo}"
-                                alt="${escapeHTML(item.itemName)}"
-                                style="
-                                    width:100%;
-                                    max-height:280px;
-                                    object-fit:contain;
-                                    border-radius:10px;
-                                    margin-bottom:20px;
-                                "
-                            >
-                          `
+                        ? window.FindBackPhotoViewer.markup(item.photo, item.itemName, "item-detail-photo")
                         : ""
                 }
 
@@ -1167,6 +1137,7 @@ function showItemDetails(item) {
 
 
     document.body.appendChild(modal);
+    window.FindBackPhotoViewer?.protect(modal);
 
 
     document

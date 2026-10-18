@@ -48,6 +48,7 @@
 
     async function uploadPhoto(userId, file) {
         if (!validate(file)) throw new Error("Choose a JPG, PNG, WebP, or GIF image up to 5 MB.");
+        if (typeof supabaseClient === "undefined" || !supabaseClient) throw new Error("Image service is unavailable.");
         const extension = ({ "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif" })[file.type];
         const path = `${userId}/profile/avatar-${crypto.randomUUID()}.${extension}`;
         const { error: uploadError } = await supabaseClient.storage.from(BUCKET).upload(path, file, {
@@ -71,7 +72,7 @@
     }
 
     async function uploadPending(userId) {
-        if (!window.indexedDB || !userId || !window.supabaseClient) return false;
+        if (!window.indexedDB || !userId || typeof supabaseClient === "undefined" || !supabaseClient) return false;
         const record = await withStore("readonly", store => store.get(RECORD_ID));
         if (!record?.file) return false;
         await uploadPhoto(userId, record.file);

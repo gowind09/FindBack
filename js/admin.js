@@ -198,18 +198,10 @@ async function viewReport(id) {
     const item = allReports.find(report => report.id === id);
     if (!item) return;
 
-    let imageUrl = "";
-    if (item.image_url) {
-        const { data, error } = await supabaseClient
-            .storage
-            .from("item-images")
-            .createSignedUrl(item.image_url, 3600);
-        if (!error) imageUrl = data.signedUrl;
-    }
     const modalBody = document.getElementById("modalBody");
 
     modalBody.innerHTML = `
-        ${imageUrl ? `<img src="${escapeHTML(imageUrl)}" class="detail-image" alt="Item image">` : ""}
+        ${item.image_url ? window.FindBackPhotoViewer.markup(item.image_url, "Item image", "admin-detail-photo") : ""}
         <h2>${escapeHTML(item.item_name)}</h2>
         <div class="detail-row"><strong>Tracking ID</strong><span>${escapeHTML(item.tracking_id || item.id)}</span></div>
         <div class="detail-row"><strong>Type</strong><span>${capitalize(item.item_type)}</span></div>
@@ -223,6 +215,7 @@ async function viewReport(id) {
         <div class="detail-row"><strong>Description</strong><span>${escapeHTML(item.description)}</span></div>
     `;
 
+    window.FindBackPhotoViewer?.protect(modalBody);
     document.getElementById("itemModal").classList.add("show");
 }
 

@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
         avatar.className = "profile-avatar";
         avatar.textContent = (profile?.full_name || user.email || "U").trim().charAt(0).toUpperCase();
         if (profile?.avatar_path) {
-            const { data: photoData } = await supabaseClient.storage.from("item-images").createSignedUrl(profile.avatar_path, 3600);
+            const { data: photoData } = await supabaseClient.storage.from("item-images").createSignedUrl(profile.avatar_path, 300);
             if (version !== renderVersion) return;
             if (photoData?.signedUrl) {
                 avatar.style.backgroundImage = `url("${photoData.signedUrl}")`;
@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
             status.textContent = "";
             try {
                 const path = await window.FindBackProfilePhoto.upload(user.id, file);
-                const { data: photoData, error: photoError } = await supabaseClient.storage.from("item-images").createSignedUrl(path, 3600);
+                const { data: photoData, error: photoError } = await supabaseClient.storage.from("item-images").createSignedUrl(path, 300);
                 if (photoError || !photoData?.signedUrl) throw photoError || new Error("Could not display the uploaded picture.");
                 avatar.style.backgroundImage = `url("${photoData.signedUrl}")`;
                 avatar.classList.add("has-profile-photo");
