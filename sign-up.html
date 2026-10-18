@@ -19,8 +19,8 @@
             <form id="signupForm">
                 <label for="fullName">Full name</label>
                 <input id="fullName" name="fullName" type="text" autocomplete="name" placeholder="Enter your full name" required>
-                <label for="phone">Phone number</label>
-                <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="Enter your phone number" minlength="7" maxlength="20" pattern="[+0-9() -]{7,20}" title="Enter 7 to 20 digits or phone symbols">
+                <label for="phone">Phone number <span class="optional-label">(optional)</span></label>
+                <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="Enter your phone number (optional)" minlength="7" maxlength="20" pattern="[+0-9() -]{7,20}" title="Enter 7 to 20 digits or phone symbols">
                 <label for="profilePhoto">Profile photo <span class="optional-label">(optional)</span></label>
                 <input id="profilePhoto" name="profilePhoto" type="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-describedby="profilePhotoHelp">
                 <small id="profilePhotoHelp" class="reset-help">JPG, PNG, WebP, or GIF · up to 5 MB</small>

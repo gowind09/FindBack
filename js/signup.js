@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (profilePhoto && !window.FindBackProfilePhoto?.validate(profilePhoto)) {
             return setMessage("Choose a JPG, PNG, WebP, or GIF image up to 5 MB.", true);
         }
-        if (!/^\+?[0-9\s()\-]{7,20}$/.test(phone)) return setMessage("Please enter a valid phone number.", true);
+        if (phone && !/^\+?[0-9\s()\-]{7,20}$/.test(phone)) return setMessage("Please enter a valid phone number.", true);
         if (password.value.length < 8) return setMessage("Use at least 8 characters for your password.", true);
         if (password.value !== confirmPassword.value) return setMessage("Passwords do not match.", true);
         if (!supabaseClient) return setMessage("Supabase could not load. Check your internet connection and reload the page.", true);
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 options: {
                     data: {
                         full_name: fullName,
-                        phone,
+                        phone: phone || null,
                         terms_accepted_at: new Date().toISOString(),
                         terms_version: "2026-09-26"
                     }
