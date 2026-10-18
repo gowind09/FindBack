@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 status.textContent = signOutError.message;
                 return;
             }
-            window.location.href = "home.html";
+            window.location.href = "index.html";
         });
         panel.append(signOut);
         menu.append(summary, panel);

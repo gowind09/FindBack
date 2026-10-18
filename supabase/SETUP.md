@@ -43,6 +43,6 @@ Set the Supabase **Site URL** to the real production app origin (the deployed Fi
 
 ## Local verification
 
-Serve the `FindBack-src/FindBack` directory on localhost (for example with VS Code Live Server), then test with an email account you control. Sign up, read the six-digit message, enter it on `verify-otp.html`, and confirm the app returns to `home.html`. Then use **Forgot password?**, enter the account email, verify its six-digit recovery code, set a new password, and sign in with it. Test an incorrect/expired code and the resend cooldown as well. Never test with fake codes or by placing codes/passwords in browser storage.
+Serve the `FindBack-src/FindBack` directory on localhost (for example with VS Code Live Server), then test with an email account you control. Sign up, read the six-digit message, enter it on `verify-otp.html`, and confirm the app returns to `index.html`. Then use **Forgot password?**, enter the account email, verify its six-digit recovery code, set a new password, and sign in with it. Test an incorrect/expired code and the resend cooldown as well. Never test with fake codes or by placing codes/passwords in browser storage.
 
 The signup verification page asks for the email again and does not store the email, password, or OTP in browser storage. This repository can validate browser-side code, but actual email delivery, template rendering, and SMTP settings must be verified in the connected Supabase project after the dashboard settings are saved.

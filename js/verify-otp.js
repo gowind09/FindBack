@@ -61,11 +61,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 } catch (photoError) {
                     console.error("Profile photo upload failed after email verification:", photoError);
                     setMessage("Your email is verified, but the profile photo could not be uploaded. You can continue to FindBack.", true);
-                    window.setTimeout(() => window.location.replace("home.html"), 2200);
+                    window.setTimeout(() => window.location.replace("index.html"), 2200);
                     return;
                 }
             }
-            window.location.replace("home.html");
+            window.location.replace("index.html");
         } catch (error) {
             console.error("Email OTP verification error:", error);
             setMessage(error.message || "That code is invalid or expired. Request a new one.", true);

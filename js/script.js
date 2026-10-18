@@ -1465,7 +1465,7 @@ function setupLogin() {
       if (roleError) console.error("Signed in, but account role lookup failed:", roleError);
       const destination = ["admin", "super_admin", "president"].includes(roleData?.role)
         ? "FBPU-admin.html"
-        : "home.html";
+        : "index.html";
       window.location.replace(destination);
     } catch (error) {
       console.error("Login error:", error);

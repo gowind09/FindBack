@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     try { await window.FindBackProfilePhoto.uploadPending(data.user.id); }
                     catch (photoError) { console.warn("Profile photo will be retried after signup:", photoError); }
                 }
-                window.location.replace("home.html");
+                window.location.replace("index.html");
                 return;
             }
             window.location.assign("verify-otp.html");

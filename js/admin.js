@@ -48,14 +48,14 @@ async function checkAdminAccess() {
         .single();
 
     if (roleError || !roleData) {
-        window.location.href = "home.html";
+        window.location.href = "index.html";
         return false;
     }
 
     currentRole = roleData.role;
 
     if (!["admin", "super_admin", "president"].includes(currentRole)) {
-        window.location.href = "home.html";
+        window.location.href = "index.html";
         return false;
     }
 
