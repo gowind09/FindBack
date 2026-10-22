@@ -20,6 +20,7 @@
         <button class="nav-item" data-section="reports">Reports</button>
         <button class="nav-item" data-section="users">Users</button>
         <button class="nav-item" data-section="messages">Feedback</button>
+        <button class="nav-item" data-section="chats" id="chatsNav">Chats</button>
         <button class="nav-item" data-section="admins" id="adminsNav">Administrators</button>
     </nav>
     <div class="sidebar-bottom">
@@ -220,6 +221,11 @@
             </div>
         </div>
         <div id="messagesContainer" class="messages-grid"></div>
+    </section>
+
+    <section id="chatsSection" class="page-section">
+        <div class="section-header"><div><h2>Report chats</h2><p>Conversation history visible to Super Admins and the President.</p></div><button class="view-btn" id="refreshAdminChats" type="button">Refresh</button></div>
+        <div id="adminChatsContainer" class="messages-grid"></div>
     </section>
 
     <section id="adminsSection" class="page-section">

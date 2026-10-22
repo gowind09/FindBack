@@ -200,7 +200,7 @@ async function loadItems() {
 
         const { data, error } = await supabaseClient
             .from("items")
-            .select("*")
+            .select("id,tracking_id,item_type,item_name,category,location,item_date,description,image_url,status,created_at,user_id")
             .order("created_at", { ascending: false });
         if (error) {
             itemsCache = [];
@@ -217,9 +217,6 @@ async function loadItems() {
                 location: row.location || "",
                 date: row.item_date || "",
                 description: row.description || "",
-                contactName: row.contact_name || "",
-                email: row.contact_email || "",
-                phone: row.contact_phone || "",
                 photo: row.image_url || "",
                 status: row.status,
                 createdAt: row.created_at,
@@ -311,16 +308,6 @@ function setupReportForm() {
 
         let uploadedPath = null;
         try {
-            const { data: profile, error: profileError } = await supabaseClient
-                .from("profiles")
-                .select("full_name,email,phone")
-                .eq("id", user.id)
-                .maybeSingle();
-            if (profileError) throw profileError;
-            if (!profile?.full_name || !profile?.email) {
-                throw new Error("Please complete your name and email in your profile before reporting an item.");
-            }
-
             const file = photoInput?.files?.[0];
             if (file) {
                 const extension = ({ "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif" })[file.type];
@@ -342,13 +329,10 @@ function setupReportForm() {
                     location,
                     item_date: dateField.value,
                     description,
-                    contact_name: profile.full_name,
-                    contact_email: profile.email,
-                    contact_phone: profile.phone || null,
                     image_url: uploadedPath,
                     status: "active"
                 })
-                .select()
+                .select("id,tracking_id")
                 .single();
             if (insertError) throw insertError;
 
@@ -1046,64 +1030,9 @@ function showItemDetails(item) {
                 <hr>
 
 
-                <h3>
-                    Contact Information
-                </h3>
-
-
-                <p>
-                    <strong>
-                        Name:
-                    </strong>
-
-                    ${escapeHTML(
-                        item.contactName
-                    )}
-                </p>
-
-
-                <p>
-
-                    <strong>
-                        Email:
-                    </strong>
-
-                    <a href="mailto:${escapeHTML(
-                        item.email
-                    )}">
-
-                        ${escapeHTML(
-                            item.email
-                        )}
-
-                    </a>
-
-                </p>
-
-
-                ${
-                    item.phone
-                        ? `
-                            <p>
-
-                                <strong>
-                                    Phone:
-                                </strong>
-
-                                <a href="tel:${escapeHTML(
-                                    item.phone
-                                )}">
-
-                                    ${escapeHTML(
-                                        item.phone
-                                    )}
-
-                                </a>
-
-                            </p>
-                          `
-                        : ""
-                }
+                <h3>Contact the reporter privately</h3>
+                <p>Your contact details stay private. Start a FindBack chat about this report.</p>
+                ${item.userId !== currentUserId ? `<button id="startItemChat" data-item-id="${escapeHTML(item.id)}" style="width:100%;margin:8px 0;padding:12px;border:0;border-radius:8px;background:#2563eb;color:white;font-weight:600;cursor:pointer">Message reporter</button>` : `<p>Open Chats from the navigation to view conversations about this report.</p>`}
 
 
                 ${item.userId === currentUserId ? `
@@ -1158,6 +1087,8 @@ function showItemDetails(item) {
 
             }
         );
+
+    document.getElementById("startItemChat")?.addEventListener("click", () => startReportChat(item));
 
     document.getElementById("editItem")?.addEventListener("click", () => showEditReportForm(item));
 
@@ -1300,15 +1231,54 @@ function renderMyReports(searchTerm = "") {
     const term = searchTerm.trim().toLowerCase();
     const reports = getItems().filter(item => item.userId === currentUserId && (!term ||
         [item.itemName, item.category, item.location, item.description].join(" ").toLowerCase().includes(term)));
-    container.innerHTML = reports.length
-        ? `<div class="my-reports-grid">${reports.map(createCard).join("")}</div>`
-        : `<p class="my-reports-empty">You have no reports${term ? " matching this search" : " yet"}.</p>`;
+    container.innerHTML = `<p class="my-reports-chat-link"><a href="chats.html">Open your chats →</a></p>` + (reports.length
+        ? `<h3>Your reports</h3><div class="my-reports-grid">${reports.map(createCard).join("")}</div>`
+        : `<p class="my-reports-empty">You have no reports${term ? " matching this search" : " yet"}.</p>`);
     container.querySelectorAll("[data-view-id]").forEach(button => {
         button.addEventListener("click", () => {
             const item = reports.find(report => report.id === button.dataset.viewId);
             if (item) showItemDetails(item);
         });
     });
+}
+
+function chooseLinkedReport(reports) {
+    return new Promise(resolve => {
+        const dialog = document.createElement("dialog");
+        dialog.className = "chat-report-picker";
+        dialog.innerHTML = `<form method="dialog"><h2>Link this chat to your report?</h2><p>Choose the report that matches this conversation. It will appear under that report’s Lost or Found tab.</p><label for="chatRelatedReport">Your report</label><select id="chatRelatedReport"><option value="">Do not link a report</option>${reports.map(report => `<option value="${escapeHTML(report.id)}">${escapeHTML(report.itemName)} · ${escapeHTML(report.trackingId)}</option>`).join("")}</select><div class="chat-picker-actions"><button type="button" data-chat-picker-cancel>Cancel</button><button type="submit" value="continue">Continue</button></div></form>`;
+        document.body.appendChild(dialog);
+        dialog.querySelector("[data-chat-picker-cancel]").addEventListener("click", () => dialog.close("cancel"));
+        dialog.addEventListener("close", () => {
+            resolve(dialog.returnValue === "continue" ? dialog.querySelector("#chatRelatedReport").value || null : false);
+            dialog.remove();
+        }, { once: true });
+        dialog.showModal();
+    });
+}
+
+async function startReportChat(item) {
+    if (!currentUserId) { showToast("Please sign in to message the reporter.", "error"); return; }
+    if (!supabaseClient) { showToast("Chat is unavailable right now.", "error"); return; }
+    try {
+        const { data: existing, error: findError } = await supabaseClient.from("item_chats")
+            .select("id").eq("item_id", item.id).eq("participant_id", currentUserId).maybeSingle();
+        if (findError) throw findError;
+        let chat = existing;
+        if (!chat) {
+            const ownMatchingReports = itemsCache.filter(report => report.userId === currentUserId && report.type !== item.type && report.status === "active");
+            let relatedItemId = ownMatchingReports.length === 1 ? ownMatchingReports[0].id : null;
+            if (ownMatchingReports.length > 1) {
+                relatedItemId = await chooseLinkedReport(ownMatchingReports);
+                if (relatedItemId === false) return;
+            }
+            const { data, error } = await supabaseClient.from("item_chats").insert({ item_id: item.id, related_item_id: relatedItemId, reporter_id: item.userId, participant_id: currentUserId }).select("id").single();
+            if (error) throw error;
+            chat = data;
+        }
+        closeModal();
+        window.location.href = `chats.html?chat=${encodeURIComponent(chat.id)}`;
+    } catch (error) { showToast(error.message || "Could not start this chat.", "error"); }
 }
 
 
@@ -1322,9 +1292,6 @@ function setupLogin() {
   if (!loginForm) return;
 
   const loginMessage = document.getElementById("loginMessage");
-  const resetForm = document.getElementById("passwordResetForm");
-  const resetMessage = document.getElementById("passwordResetMessage");
-  const forgotPasswordLink = document.getElementById("forgotPasswordLink");
   const signupState = new URLSearchParams(window.location.search).get("signup");
   if (signupState === "check-email" && loginMessage) {
     loginMessage.textContent = "Your account is ready. Verify your email before signing in.";
@@ -1333,56 +1300,6 @@ function setupLogin() {
   }
   if (new URLSearchParams(window.location.search).get("password") === "updated" && loginMessage) {
     loginMessage.textContent = "Password updated. Sign in with your new password.";
-  }
-
-  forgotPasswordLink?.addEventListener("click", async event => {
-    event.preventDefault();
-    window.location.href = forgotPasswordLink.href;
-  });
-
-  resetForm?.addEventListener("submit", async event => {
-    event.preventDefault();
-    const password = document.getElementById("newPassword").value;
-    const confirmation = document.getElementById("confirmNewPassword").value;
-    const resetButton = document.getElementById("passwordResetBtn");
-    if (password.length < 8) {
-      if (resetMessage) resetMessage.textContent = "Use at least 8 characters for your new password.";
-      return;
-    }
-    if (password !== confirmation) {
-      if (resetMessage) resetMessage.textContent = "The passwords do not match.";
-      return;
-    }
-    if (!supabaseClient) {
-      if (resetMessage) resetMessage.textContent = "Supabase could not load. Check your connection and try again.";
-      return;
-    }
-
-    resetButton.disabled = true;
-    if (resetMessage) resetMessage.textContent = "Updating password...";
-    let updateError;
-    try {
-      ({ error: updateError } = await supabaseClient.auth.updateUser({ password }));
-    } catch (error) {
-      updateError = error;
-    }
-    resetButton.disabled = false;
-    if (updateError) {
-      if (resetMessage) resetMessage.textContent = updateError.message || "Could not update your password.";
-      return;
-    }
-    if (resetMessage) resetMessage.textContent = "Password updated. Returning to sign in...";
-    try { await supabaseClient.auth.signOut(); } catch (error) { console.warn("Could not clear the recovered session:", error); }
-    window.location.replace("login.html?password=updated");
-  });
-
-  if (supabaseClient && resetForm) {
-    supabaseClient.auth.onAuthStateChange(event => {
-      if (event !== "PASSWORD_RECOVERY") return;
-      loginForm.hidden = true;
-      resetForm.hidden = false;
-      if (resetMessage) resetMessage.textContent = "Enter a new password for your account.";
-    });
   }
 
   loginForm.addEventListener("submit", async (event) => {

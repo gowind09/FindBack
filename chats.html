@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Private FindBack chats about lost and found reports.">
+    <title>FindBack | Chats</title>
+    <link rel="icon" type="image/png" href="images/spy-favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="chats-page">
+    <header class="chat-topbar">
+        <a href="index.html" class="chat-home-link">← Home</a>
+        <strong>FindBack <span>Chats</span></strong>
+    </header>
+    <main class="chat-page-main">
+        <section id="chatPageApp" class="chat-page-app" aria-label="FindBack chat conversations">
+            <div class="chat-page-sidebar">
+                <div class="chat-sidebar-title"><h2>Messages</h2><button type="button" id="refreshChatPage" aria-label="Refresh conversations" title="Refresh">↻</button></div>
+                <div class="chat-category-tabs" role="tablist" aria-label="Chat report type">
+                    <button type="button" class="active" data-chat-filter="lost" role="tab" aria-selected="true">Lost</button>
+                    <button type="button" data-chat-filter="found" role="tab" aria-selected="false">Found</button>
+                </div>
+                <div id="chatPageThreads" class="chat-page-threads"><p>Loading conversations…</p></div>
+            </div>
+            <div class="chat-page-conversation">
+                <div id="chatPageHeader" class="chat-page-conversation-header"><div class="chat-name-avatar">F</div><div><strong>Select a chat</strong><span>FindBack</span></div></div>
+                <div id="chatPageMessages" class="chat-page-messages"><div class="chat-welcome"><strong>Your FindBack conversations</strong><p>Choose a chat to continue or start a new one from any report.</p></div></div>
+                <form id="chatPageComposer" class="chat-page-composer" hidden>
+                    <div id="chatSelectedFile" class="chat-selected-file" hidden><span></span><button type="button" id="removeChatFile" aria-label="Remove attachment">×</button></div>
+                    <label for="chatPageFile" class="chat-attach-button" title="Attach a file or image" aria-label="Attach a file or image">＋</label>
+                    <input id="chatPageFile" type="file" hidden accept="image/jpeg,image/png,image/webp,image/gif,application/pdf,text/plain,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,video/mp4,audio/mpeg,audio/mp4,audio/ogg">
+                    <textarea id="chatPageInput" maxlength="4000" rows="1" placeholder="Type a message" aria-label="Message"></textarea>
+                    <button type="submit" aria-label="Send message" title="Send message">➤</button>
+                </form>
+            </div>
+        </section>
+        <p id="chatPageStatus" class="chat-page-status" role="status" aria-live="polite"></p>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/chats.js"></script>
+</body>
+</html>

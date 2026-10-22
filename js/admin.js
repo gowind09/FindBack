@@ -20,6 +20,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         await loadReports();
         await loadUsers();
         await loadMessages();
+        if (["super_admin", "president"].includes(currentRole)) {
+            await loadAdminChats();
+            document.getElementById("refreshAdminChats")?.addEventListener("click", loadAdminChats);
+        } else {
+            document.getElementById("chatsNav").style.display = "none";
+        }
         await loadAdministrators();
     } catch (error) {
         console.error(error);
@@ -90,11 +96,11 @@ async function loadAdminProfile() {
 async function loadDashboard() {
     const [users, lost, found, resolved, fake, active, admins, messages] = await Promise.all([
         supabaseClient.from("profiles").select("*", { count: "exact", head: true }),
-        supabaseClient.from("items").select("*", { count: "exact", head: true }).eq("item_type", "lost"),
-        supabaseClient.from("items").select("*", { count: "exact", head: true }).eq("item_type", "found"),
-        supabaseClient.from("items").select("*", { count: "exact", head: true }).eq("status", "resolved"),
-        supabaseClient.from("items").select("*", { count: "exact", head: true }).eq("status", "fake"),
-        supabaseClient.from("items").select("*", { count: "exact", head: true }).eq("status", "active"),
+        supabaseClient.from("items").select("id", { count: "exact", head: true }).eq("item_type", "lost"),
+        supabaseClient.from("items").select("id", { count: "exact", head: true }).eq("item_type", "found"),
+        supabaseClient.from("items").select("id", { count: "exact", head: true }).eq("status", "resolved"),
+        supabaseClient.from("items").select("id", { count: "exact", head: true }).eq("status", "fake"),
+        supabaseClient.from("items").select("id", { count: "exact", head: true }).eq("status", "active"),
         supabaseClient.from("user_roles").select("*", { count: "exact", head: true }).in("role", ["admin", "super_admin", "president"]),
         supabaseClient.from("contact_messages").select("*", { count: "exact", head: true })
     ]);
@@ -128,7 +134,7 @@ async function loadDashboard() {
 async function loadReports() {
     const { data, error } = await supabaseClient
         .from("items")
-        .select("*")
+        .select("id,tracking_id,item_type,item_name,category,location,item_date,description,image_url,status,created_at,user_id")
         .order("created_at", { ascending: false });
 
     if (error) {
@@ -209,9 +215,6 @@ async function viewReport(id) {
         <div class="detail-row"><strong>Location</strong><span>${escapeHTML(item.location)}</span></div>
         <div class="detail-row"><strong>Date</strong><span>${formatDate(item.item_date)}</span></div>
         <div class="detail-row"><strong>Status</strong><span>${capitalize(item.status)}</span></div>
-        <div class="detail-row"><strong>Contact Name</strong><span>${escapeHTML(item.contact_name || "Not provided")}</span></div>
-        <div class="detail-row"><strong>Contact Email</strong><span>${escapeHTML(item.contact_email || "Not provided")}</span></div>
-        <div class="detail-row"><strong>Phone</strong><span>${escapeHTML(item.contact_phone || "Not provided")}</span></div>
         <div class="detail-row"><strong>Description</strong><span>${escapeHTML(item.description)}</span></div>
     `;
 
@@ -493,6 +496,7 @@ function switchSection(section) {
         reports: ["Reports", "Review and manage lost and found reports"],
         users: ["Users", "View registered FindBack users"],
         messages: ["Feedback", "Review feedback submitted through FindBack"],
+        chats: ["Report chats", "Review private report conversations"],
         admins: ["Administrators", "Manage FindBack administrators"]
     };
 
@@ -500,6 +504,17 @@ function switchSection(section) {
         document.getElementById("pageTitle").textContent = titles[section][0];
         document.getElementById("pageSubtitle").textContent = titles[section][1];
     }
+}
+
+async function loadAdminChats() {
+    const container = document.getElementById("adminChatsContainer");
+    if (!container) return;
+    const { data: chats, error } = await supabaseClient.from("item_chats")
+        .select("id,created_at,reporter_id,participant_id,reporter_name,participant_name,report_item:items!item_chats_item_id_fkey(item_name,tracking_id),item_chat_messages(id,sender_id,body,created_at)")
+        .order("created_at", { ascending: false });
+    if (error) { console.error("Could not load report chats:", error); container.textContent = `Could not load report chats: ${error.message}`; return; }
+    if (!chats?.length) { container.innerHTML = "<p>No report chats yet.</p>"; return; }
+    container.innerHTML = chats.map(chat => `<article class="message-card"><h3>${escapeHTML(chat.report_item?.item_name || "Report")} · ${escapeHTML(chat.report_item?.tracking_id || "")}</h3><p>Reporter: ${escapeHTML(chat.reporter_name || "FindBack user")} · Other participant: ${escapeHTML(chat.participant_name || "FindBack user")}</p><div class="admin-chat-transcript">${(chat.item_chat_messages || []).sort((a,b) => new Date(a.created_at)-new Date(b.created_at)).map(message => `<p><strong>${escapeHTML(message.sender_id === chat.reporter_id ? chat.reporter_name : message.sender_id === chat.participant_id ? chat.participant_name : "Admin")}</strong> <small>${formatDate(message.created_at)}</small><br>${escapeHTML(message.body || (message.attachment_name ? `Attachment: ${message.attachment_name}` : ""))}</p>`).join("") || "<p>No messages yet.</p>"}</div></article>`).join("");
 }
 
 function setupFilters() {

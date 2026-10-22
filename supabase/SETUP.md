@@ -1,6 +1,6 @@
 # FindBack Supabase setup
 
-The connected FindBack project already has the SQL changes below applied. If you deploy this code to another Supabase project, run the SQL files in this order:
+The connected FindBack project already has the SQL changes below applied, including `setup_report_chats.sql`. If you deploy this code to another Supabase project, run the SQL files in this order:
 
 1. `setup_profile_contact_terms.sql`
 2. `setup_items_storage.sql`
@@ -9,6 +9,7 @@ The connected FindBack project already has the SQL changes below applied. If you
 5. `setup_president_admin_management.sql`
 6. `setup_profile_photo.sql`
 7. `secure_photo_access.sql` (for an already-deployed project; this replaces the broad photo-read policy)
+8. `setup_report_chats.sql` (removes report contact-field reads and adds persistent private report chats)
 
 Sign-up accepts an optional JPG, PNG, WebP, or GIF profile photo up to 5 MB. The photo is held locally until email verification establishes a signed-in session, then uploaded to the private `item-images` bucket under the user's own folder and saved as `profiles.avatar_path`.
 
@@ -20,14 +21,17 @@ Run `setup_president_admin_management.sql` after the earlier SQL files. Deploy `
 
 The Auth trigger grants `super_admin` to `govind-admin@findback.com` and `president` to `govindpandit295@gmail.com`. The connected project account `govindpandit295@gmail.com` is assigned the President role by `grant_president_govindpandit.sql`. Login sends all three admin roles to `FBPU-admin.html`; public pages show the Admin Dashboard navigation link only to these roles.
 
-## Email OTP setup (required for signup and recovery)
+`setup_report_chats.sql` enables persistent private report chats. The dedicated `chats.html` page fills the browser window, with Lost and Found tabs. A conversation appears under the type of the current user's own linked report (lost-item reporters see Lost; found-item reporters see Found). Starting a chat from a matching report links the user's opposite-type report when available. The reporter and the person who contacted them can read and send messages; Super Admins and the President can review conversation history. Regular Admins and other users cannot read those chats. Messages support private image, document, audio, and video attachments up to 15 MB; images, videos, audio, and PDFs can be previewed in the chat. The script revokes Data API read access to report contact name, email, and phone columns so contact details are no longer exposed through report listings.
+
+## Email OTP setup (required for signup only)
 
 Email confirmation and outgoing mail are Supabase project settings; deploying the website does not change them. In the Supabase Dashboard for this project:
 
 1. Open **Authentication → Sign In / Providers → Email** and enable **Confirm email**. This makes Supabase require verified email before password sign-in. The signup page will route a new account to `verify-otp.html` when Supabase returns no session, as expected with email confirmation enabled.
 2. Open **Authentication → Email Templates → Confirm signup**. Set the subject to `Your FindBack verification code` and replace the body with `signup-email-template.html`. The body must contain `{{ .Token }}` and must not contain `{{ .ConfirmationURL }}` if you want a six-digit code instead of a confirmation link. The signup page verifies the code with Supabase `verifyOtp` using `type: "email"`; resend uses `auth.resend({ type: "signup", email })`.
-3. Open **Authentication → Email Templates → Reset Password**. Set the subject to `Your FindBack password reset code` and replace the body with `recovery-email-template.html`. The body must contain `{{ .Token }}` and must not contain `{{ .ConfirmationURL }}` or another link. The reset page verifies this code as a `recovery` OTP and updates the password only after Supabase creates a recovery session.
-4. Save each template and request a fresh email. Supabase templates are hosted in the project dashboard; the HTML files in this repository are copy/paste sources.
+3. Save the signup template and request a fresh email. Supabase templates are hosted in the project dashboard; the HTML file in this repository is the copy/paste source. Login and signup use email and password. Forgot password sends a standard Supabase password reset link and lets the user set a new password after opening it.
+
+For password recovery, open **Authentication → Email Templates → Reset Password** and make sure the message uses Supabase's `{{ .ConfirmationURL }}` link (not a recovery OTP template). The link returns to `reset-password.html`, where the user enters a new password.
 
 ### Configure Gmail SMTP
 
@@ -44,10 +48,10 @@ Use these values in Supabase's custom SMTP form:
 
 Keep the SMTP password and Supabase secret/service-role keys out of this repository and all browser JavaScript. Gmail and Google Workspace policies can restrict SMTP/App Password availability; use another SMTP provider if Google does not offer App Passwords for the account.
 
-Set the Supabase **Site URL** to the real production app origin (the deployed FindBack domain, never localhost). Add the exact local development origin and production origin to the redirect allow list only if other Auth callbacks need them. These OTP flows don't send a redirect URL and both email templates use only `{{ .Token }}`, so the flows do not depend on clickable localhost links. If an email still contains one, the hosted template has not been replaced/saved, or a different template is sending that message.
+Set the Supabase **Site URL** to the real production app origin (the deployed FindBack domain, never localhost). Add the full production and local `reset-password.html` URLs to Supabase **Authentication → URL Configuration → Redirect URLs** so password reset links return to FindBack. If signup email contains a localhost link instead of a code, the hosted confirmation template has not been replaced/saved, or a different template is sending that message.
 
 ## Local verification
 
-Serve the `FindBack-src/FindBack` directory on localhost (for example with VS Code Live Server), then test with an email account you control. Sign up, read the six-digit message, enter it on `verify-otp.html`, and confirm the app returns to `index.html`. Then use **Forgot password?**, enter the account email, verify its six-digit recovery code, set a new password, and sign in with it. Test an incorrect/expired code and the resend cooldown as well. Never test with fake codes or by placing codes/passwords in browser storage.
+Serve the `FindBack-src/FindBack` directory on localhost (for example with VS Code Live Server), then test with accounts you control. Confirm signup with its six-digit email code, and verify forgot-password sends a reset link that opens the password update form. Open **Chats** from the home page and confirm the participant names and saved messages appear for each chat participant.
 
 The signup verification page asks for the email again and does not store the email, password, or OTP in browser storage. This repository can validate browser-side code, but actual email delivery, template rendering, and SMTP settings must be verified in the connected Supabase project after the dashboard settings are saved.
