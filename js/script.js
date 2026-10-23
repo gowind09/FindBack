@@ -1032,7 +1032,7 @@ function showItemDetails(item) {
 
                 <h3>Contact the reporter privately</h3>
                 <p>Your contact details stay private. Start a FindBack chat about this report.</p>
-                ${item.userId !== currentUserId ? `<button id="startItemChat" data-item-id="${escapeHTML(item.id)}" style="width:100%;margin:8px 0;padding:12px;border:0;border-radius:8px;background:#2563eb;color:white;font-weight:600;cursor:pointer">Message reporter</button>` : `<p>Open Chats from the navigation to view conversations about this report.</p>`}
+                ${item.userId !== currentUserId ? `<button id="startItemChat" data-item-id="${escapeHTML(item.id)}" style="width:100%;margin:8px 0;padding:12px;border:0;border-radius:8px;background:#2563eb;color:white;font-weight:600;cursor:pointer">Message reporter</button>` : `<p>Open Chats from the home page to view conversations about this report.</p>`}
 
 
                 ${item.userId === currentUserId ? `
